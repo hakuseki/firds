@@ -20,7 +20,6 @@ public class DownloadESMA extends EndpointRouteBuilder {
         //tag::FULL[]
         from(quartz("FIRDSDownloader/Full").cron("{{esma.download.timer.full}}")
                                            .recoverableJob(true))
-                //                                    from(timer("FIRDSDownloader/Full").repeatCount(1))
                 .routeId("FIRDS Download Full")
                 .description("Downloading FUL files from ESMA")
                 .autoStartup("{{esma.download.startup}}")
