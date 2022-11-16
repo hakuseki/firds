@@ -10,7 +10,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Currency;
 
+/**
+ * The type Xml to sql bean.
+ */
 public class XmlToSqlBean {
+    /**
+     * The constant LOG.
+     */
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(XmlToSqlBean.class);
 
     /**

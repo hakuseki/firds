@@ -9,7 +9,15 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * The type Download anna.
+ */
 public class DownloadAnna extends EndpointRouteBuilder {
+    /**
+     * Configure.
+     *
+     * @throws Exception the exception
+     */
     @Override
     public void configure() throws Exception {
 

@@ -8,9 +8,14 @@ import se.hakuseki.beans.XmlToSqlBean;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 
+/**
+ * The type Full import.
+ */
 public class FullImport extends EndpointRouteBuilder {
     /**
      * Configure.
+     *
+     * @throws ParserConfigurationException the parser configuration exception
      */
     @Override
     public void configure() throws ParserConfigurationException {

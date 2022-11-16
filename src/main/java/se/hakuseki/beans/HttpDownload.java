@@ -5,12 +5,16 @@ import org.apache.camel.language.xpath.XPath;
 
 import java.util.regex.Pattern;
 
+/**
+ * The type Http download.
+ */
 public class HttpDownload {
     /**
      * To link string.
      *
      * @param fileName the file name
      * @param link     the link
+     * @param fileType the file type
      * @return the string
      */
     public String toLink(@XPath("/doc/str[@name='file_name']") final String fileName,
