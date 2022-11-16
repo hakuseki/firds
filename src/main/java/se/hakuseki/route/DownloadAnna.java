@@ -15,7 +15,8 @@ public class DownloadAnna extends EndpointRouteBuilder {
 
         //tag::ANNA[]
         from(activemq("gleif.lei").selector("JMSType='ANNA'"))
-                .routeId("DOWNLOAD-ANNA").description("Downloads the GLEIF-ANNA ISIN to LEI files for imports")
+                .routeId("DOWNLOAD-ANNA")
+                .description("Downloads the GLEIF-ANNA ISIN to LEI files for imports")
                 .autoStartup("{{firds.gleif.anna.startup}}")
                 .to(direct("ANNA"))
                 .setBody(constant(""))
@@ -72,6 +73,7 @@ public class DownloadAnna extends EndpointRouteBuilder {
     }
 
     //tag::createValidSQL[]
+
     /**
      * Create valid sql string.<br>
      * <p>

@@ -24,10 +24,12 @@ public class FullImport extends EndpointRouteBuilder {
                                        .readLock("changed")
                                        .advanced()
                                        .synchronous(true))
-                .routeId("Full Import") .description("Imports FUL files and persists in database")
+                .routeId("Full Import")
+                .description("Imports FUL files and persists in database")
                 .autoStartup("{{esma.full.startup}}")
                 .idempotentConsumer(simple("${file:name}"),
-                                    FileIdempotentRepository.fileIdempotentRepository(new File("FIRDS/data/FIRDSFull.dat")))
+                                    FileIdempotentRepository.fileIdempotentRepository(
+                                            new File("FIRDS/data/FIRDSFull.dat")))
                 .to(direct("Full"))
                 .log("Full import completed!")
                 .end();

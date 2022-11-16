@@ -9,7 +9,6 @@ import se.hakuseki.beans.XmlToSqlBean;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-
 import java.io.File;
 
 public class DeltaImport extends EndpointRouteBuilder {
@@ -42,10 +41,12 @@ public class DeltaImport extends EndpointRouteBuilder {
                                         .readLock("changed")
                                         .advanced()
                                         .synchronous(true))
-                .routeId("Delta Import").description("Imports ZIP files and persists in database")
+                .routeId("Delta Import")
+                .description("Imports ZIP files and persists in database")
                 .autoStartup("{{esma.delta.startup}}")
                 .idempotentConsumer(simple("${file:name}"),
-                                    FileIdempotentRepository.fileIdempotentRepository(new File("FIRDS/data/FIRDSDelta.dat")))
+                                    FileIdempotentRepository.fileIdempotentRepository(
+                                            new File("FIRDS/data/FIRDSDelta.dat")))
 
                 .to(direct("delta"))
                 .choice()

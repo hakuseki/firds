@@ -28,12 +28,16 @@ public class XmlToSqlBean {
      * @param newRecord       the new record
      * @return the string
      */
-    public String toSql(@XPath("//FinInstrmGnlAttrbts/Id") final String isin, @XPath("//NtnlCcy") final String currency,
-                        @XPath("//FullNm") final String fullName, @XPath("//TradgVnRltdAttrbts/Id") final String venue,
+    public String toSql(@XPath("//FinInstrmGnlAttrbts/Id") final String isin,
+                        @XPath("//NtnlCcy") final String currency,
+                        @XPath("//FullNm") final String fullName,
+                        @XPath("//TradgVnRltdAttrbts/Id") final String venue,
                         @XPath("//ClssfctnTp") final String classification,
                         @XPath("//TradgVnRltdAttrbts/TermntnDt") final String terminationDate,
-                        @XPath("//Issr") final String issuer, @XPath("//MtrtyDt") String maturityDate,
-                        @XPath("//TermntdRcrd") final String termnRecord, @XPath("//NewRcrd") final String newRecord) {
+                        @XPath("//Issr") final String issuer,
+                        @XPath("//MtrtyDt") String maturityDate,
+                        @XPath("//TermntdRcrd") final String termnRecord,
+                        @XPath("//NewRcrd") final String newRecord) {
         String         sqlStr        = null;
         final String[] fullNameArray = fullName.split(" ");
         String         priceCurrency = "XX";

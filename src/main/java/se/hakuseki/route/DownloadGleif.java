@@ -30,7 +30,8 @@ public class DownloadGleif extends EndpointRouteBuilder {
 
         //tag::GLEIF[]
         from(activemq("gleif.lei").selector("JMSType='LEI'"))
-                .routeId("GLEIF-Lookup").description("Queries GLEIF for a Jurisdiction of the Issuer using a LEI as argument")
+                .routeId("GLEIF-Lookup")
+                .description("Queries GLEIF for a Jurisdiction of the Issuer using a LEI as argument")
                 .autoStartup("{{firds.gleif.lei.startup}}")
                 .log("Starting to update ISIN using LEI from Issuer")
                 .to(direct(GLEIF))
@@ -56,24 +57,26 @@ public class DownloadGleif extends EndpointRouteBuilder {
 
         from(activemq("gleif"))
                 .routeId("GLEIF-AMQ")
-                .errorHandler(deadLetterChannel("activemq:gleif.lei").useOriginalMessage()
-                                                                     .disableRedelivery()
-                                                                     .logExhaustedMessageBody(true)
-                                                                     .logExhaustedMessageHistory(true)
-                                                                     .logHandled(true)
-                                                                     .log("GLEIF-AMQ")
-                                                                     .onPrepareFailure(exchange -> {
-                                                                         final Exception cause = exchange.getProperty(
-                                                                                 Exchange.EXCEPTION_CAUGHT,
-                                                                                 Exception.class);
-                                                                         final Message in = exchange
-                                                                                 .getIn();
-                                                                         in.setHeader("FailedBecause",
-                                                                                      cause.getMessage());
-                                                                         in.setHeader(ScheduledMessage.AMQ_SCHEDULED_DELAY,
-                                                                                      90_000L);
-                                                                     }))
-                .throttle(simple("{{firds.gleif.lei.throttle.requests}}",Long.class))
+                .errorHandler(deadLetterChannel("activemq:gleif.lei")
+                                      .useOriginalMessage()
+                                      .disableRedelivery()
+                                      .logExhaustedMessageBody(true)
+                                      .logExhaustedMessageHistory(true)
+                                      .logHandled(true)
+                                      .log("GLEIF-AMQ")
+                                      .onPrepareFailure(exchange -> {
+                                          final Exception cause = exchange.getProperty(
+                                                  Exchange.EXCEPTION_CAUGHT,
+                                                  Exception.class);
+                                          final Message in = exchange
+                                                  .getIn();
+                                          in.setHeader("FailedBecause",
+                                                       cause.getMessage());
+                                          in.setHeader(
+                                                  ScheduledMessage.AMQ_SCHEDULED_DELAY,
+                                                  90_000L);
+                                      }))
+                .throttle(simple("{{firds.gleif.lei.throttle.requests}}", Long.class))
                 .timePeriodMillis("{{firds.gleif.lei.throttle.time}}")
                 .setHeader(Exchange.HTTP_QUERY, simple("filter[lei]=${body}"))
                 .toD(https("{{firds.gleif.lei.url}}").throwExceptionOnFailure(true))
@@ -97,7 +100,7 @@ public class DownloadGleif extends EndpointRouteBuilder {
      */
     private String createUpdateSQL(final Message in) {
 
-        final String body = in.getBody(String.class);
+        final String body   = in.getBody(String.class);
         final String issuer = in.getHeader("issuer", String.class);
         return String.format("UPDATE firds_data set jurisdiction='%s' where issuer='%s'",
                              StringUtils.trimAllWhitespace(body.replace("\"", "")),

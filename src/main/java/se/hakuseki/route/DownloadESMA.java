@@ -46,7 +46,7 @@ public class DownloadESMA extends EndpointRouteBuilder {
                 .streamCaching()
                 .setHeader("CamelHttpMethod", constant("GET"))
                 .log("{{esma.download.url}}")
-                .setHeader(Exchange.HTTP_QUERY, //<.>
+                .setHeader(Exchange.HTTP_QUERY,
                            simple(
                                    "q=*&fq=publication_date:[${date:now-24h:yyyy-MM-dd}T00:00:00Z+TO+${date:now-24h:yyyy-MM-dd}T23:59:59Z]&wt=xml&indent=false&start=0&rows=100"))
                 .toD(https("{{esma.download.url}}"))

@@ -18,17 +18,17 @@ public class HttpDownload {
                          @Header("fileType") final String fileType) {
         final String result;
 
-        final Pattern regexFull = Pattern.compile("FULINS_", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        final Pattern regexFull  = Pattern.compile("FULINS_", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         final Pattern regexDelta = Pattern.compile("DLTINS_", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
         switch (fileType) {
             case "FULL":
                 result = regexFull.matcher(fileName)
-                        .find() ? link : null;
+                                  .find() ? link : null;
                 break;
             case "DELTA":
                 result = regexDelta.matcher(fileName)
-                        .find() ? link : null;
+                                   .find() ? link : null;
                 break;
             default:
                 result = null;
