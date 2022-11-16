@@ -8,6 +8,9 @@ import se.hakuseki.beans.XmlToSqlBean;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 
+// tag::tagname[]
+
+// end::tagname[]
 /**
  * The type Full import.
  *
