@@ -11,6 +11,8 @@ import java.util.Map;
 
 /**
  * The type Gleif download.
+ *
+ * Queries GLEIF REST API
  */
 public class DownloadGleif extends EndpointRouteBuilder {
     /**
@@ -40,6 +42,7 @@ public class DownloadGleif extends EndpointRouteBuilder {
 
         from(direct(GLEIF))
                 .routeId(GLEIF)
+                .description("From database, pick records to enrich")
                 .setBody(constant("{{firds.gleif.lei.firds-select}}"))
                 .to(jdbc("default").outputType(JdbcOutputType.SelectList))
                 .split(body())
@@ -57,6 +60,8 @@ public class DownloadGleif extends EndpointRouteBuilder {
 
         from(activemq("gleif"))
                 .routeId("GLEIF-AMQ")
+                .description("Based on selected records from database, query REST API using a throttle to overcome " +
+                             "any DDOS issues, split result and send to database")
                 .errorHandler(deadLetterChannel("activemq:gleif.lei")
                                       .useOriginalMessage()
                                       .disableRedelivery()

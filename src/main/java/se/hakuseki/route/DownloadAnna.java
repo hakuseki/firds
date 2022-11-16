@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 /**
  * The type Download anna.
+ *
+ * ANNA is a zip file downloaded from Internet
  */
 public class DownloadAnna extends EndpointRouteBuilder {
     /**
@@ -35,6 +37,8 @@ public class DownloadAnna extends EndpointRouteBuilder {
 
         from(direct("ANNA"))
                 .routeId("ANNA")
+                .description("ANNA service is an HTML file with links for downloadable files, ending a zipped csv " +
+                             "file to parse")
                 .streamCaching()
                 .setHeader("CamelHttpMethod", constant("GET"))
                 .to(https("{{firds.gleif.anna.url}}").throwExceptionOnFailure(true))

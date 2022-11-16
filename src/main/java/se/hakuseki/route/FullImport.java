@@ -10,6 +10,8 @@ import java.io.File;
 
 /**
  * The type Full import.
+ *
+ * Imports .zip files and unmarshal to SQL statements
  */
 public class FullImport extends EndpointRouteBuilder {
     /**
@@ -41,6 +43,8 @@ public class FullImport extends EndpointRouteBuilder {
 
         from(direct("Full"))
                 .routeId("FULL")
+                .description("Unmarshal zip file, split on token, create SQL statements and send to " +
+                             "database")
                 .streamCaching()
                 .log("Processing file ${file:name}, file #${header.CamelBatchIndex}++ out of ${header.CamelBatchSize} files")
                 .unmarshal()

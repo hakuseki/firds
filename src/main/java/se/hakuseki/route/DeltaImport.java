@@ -62,6 +62,7 @@ public class DeltaImport extends EndpointRouteBuilder {
 
         from(direct("delta"))
                 .routeId("DELTA")
+                .description("Unmarshal zip file, split on token, generate SQL statements and send to database.")
                 .streamCaching()
                 .log("Processing file ${file:name}, file #${header.CamelBatchIndex}++ out of ${header.CamelBatchSize} files")
                 .unmarshal()

@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 /**
  * The type Http download.
+ *
+ * Predicate for determining the file names of FUL and DLT files
  */
 public class HttpDownload {
     /**

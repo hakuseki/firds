@@ -12,6 +12,9 @@ import java.util.Currency;
 
 /**
  * The type Xml to sql bean.
+ *
+ * Generates SQL statements for INSERT and DELETE.<br>
+ * INSERT runs using an "ON CONFLICT DO NOTHING" to avoid errors with existing records.
  */
 public class XmlToSqlBean {
     /**
@@ -20,7 +23,7 @@ public class XmlToSqlBean {
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(XmlToSqlBean.class);
 
     /**
-     * To sql string.
+     * TBean method for SQL statement generation
      *
      * @param isin            the isin
      * @param currency        the currency
