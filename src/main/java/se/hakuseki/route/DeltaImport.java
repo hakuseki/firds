@@ -56,7 +56,7 @@ public class DeltaImport extends EndpointRouteBuilder {
                 .when(simple("${header.CamelBatchComplete}"))
                 .setBody(constant(""))
                 .setHeader("JMSType", constant("ANNA")) //<.>
-                .to(activemq("gleif.lei"))
+                .to(activemq("gleif"))
                 .log("Delta import completed!")
                 .end();
 
