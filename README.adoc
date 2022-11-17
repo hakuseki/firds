@@ -24,6 +24,8 @@ Specifically it demonstrates:
 * marshall/unmarshall and parsing data formats
 * enrich content
 * persisting endpoints
+* streaming
+* parallel processing
 
 We will illustrate a scenario where we need to persist data derived from the *ESMA FIRDS* source in a database. The data is not fully complete so we need to enrich it. First we need to insert all instruments in our database and then use the data from the *ANNA* service to further enrich the data with the code from the *Issuer* of the instrument. Then we finalise the enrichment by selecting records from the database and query an online service, *GLEIF*, to set the Country on the data.
 
@@ -229,7 +231,7 @@ Or, if you don't have GraalVM installed, you can run the native executable build
 
 [source,shell script]
 ----
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+*./mvnw* package -Pnative -Dquarkus.native.container-build=true
 ----
 
 You can then execute your native executable with: `./target/firds-1.0.0-SNAPSHOT-runner`

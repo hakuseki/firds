@@ -3,7 +3,6 @@ package se.hakuseki.route;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
-import se.hakuseki.beans.XmlToSqlBean;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -56,7 +55,7 @@ public class FullImport extends EndpointRouteBuilder {
                 .tokenizeXML("RefData")
                 .streaming()
                 .parallelProcessing(true)
-                .bean(XmlToSqlBean.class)
+                .bean("xmlToSQL", "toSql")
                 .choice()
                 .when(body().isNotNull())
                 .to(jdbc("default"))

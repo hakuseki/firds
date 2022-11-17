@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * The type Gleif download.
- *
+ * <p>
  * Queries GLEIF REST API
  */
 public class DownloadGleif extends EndpointRouteBuilder {
@@ -31,20 +31,14 @@ public class DownloadGleif extends EndpointRouteBuilder {
         errorHandler(defaultErrorHandler());
 
         //tag::GLEIF[]
-        from(activemq("gleif.lei").selector("JMSType='LEI'"))
+        from(activemq("gleif").selector("JMSType='LEI'"))
                 .routeId("GLEIF-Lookup")
                 .description("Queries GLEIF for a Jurisdiction of the Issuer using a LEI as argument")
                 .autoStartup("{{firds.gleif.lei.startup}}")
                 .log("Starting to update ISIN using LEI from Issuer")
-                .to(direct(GLEIF))
-                .log("GLEIF download completed!")
-                .end();
-
-        from(direct(GLEIF))
-                .routeId(GLEIF)
-                .description("From database, pick records to enrich")
                 .setBody(constant("{{firds.gleif.lei.firds-select}}"))
                 .to(jdbc("default").outputType(JdbcOutputType.SelectList))
+                .log("Number of issuers to update: ${header.CamelJdbcRowCount}")
                 .split(body())
                 .streaming()
                 .parallelProcessing(true)
@@ -58,7 +52,7 @@ public class DownloadGleif extends EndpointRouteBuilder {
                 .to(activemq("gleif.lei"))
                 .end();
 
-        from(activemq("gleif"))
+        from(activemq("gleif.lei"))
                 .routeId("GLEIF-AMQ")
                 .description("Based on selected records from database, query REST API using a throttle to overcome " +
                              "any DDOS issues, split result and send to database")
@@ -107,9 +101,11 @@ public class DownloadGleif extends EndpointRouteBuilder {
 
         final String body   = in.getBody(String.class);
         final String issuer = in.getHeader("issuer", String.class);
-        return String.format("UPDATE firds_data set jurisdiction='%s' where issuer='%s'",
-                             StringUtils.trimAllWhitespace(body.replace("\"", "")),
-                             issuer);
+        String s = String.format("UPDATE firds_data set jurisdiction='%s' where issuer='%s'",
+                                      StringUtils.trimAllWhitespace(body.replace("\"", "")),
+                                      issuer);
+        log.trace(s);
+        return s;
     }
     //end::createUpdateSQL[]
 

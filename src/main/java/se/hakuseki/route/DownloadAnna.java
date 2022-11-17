@@ -24,7 +24,7 @@ public class DownloadAnna extends EndpointRouteBuilder {
     public void configure() throws Exception {
 
         //tag::ANNA[]
-        from(activemq("gleif.lei").selector("JMSType='ANNA'"))
+        from(activemq("gleif").selector("JMSType='ANNA'"))
                 .routeId("DOWNLOAD-ANNA")
                 .description("Downloads the GLEIF-ANNA ISIN to LEI files for imports")
                 .autoStartup("{{firds.gleif.anna.startup}}")

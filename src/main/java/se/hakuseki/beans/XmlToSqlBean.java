@@ -1,9 +1,12 @@
 package se.hakuseki.beans;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +19,9 @@ import java.util.Currency;
  * Generates SQL statements for INSERT and DELETE.<br>
  * INSERT runs using an "ON CONFLICT DO NOTHING" to avoid errors with existing records.
  */
+@ApplicationScoped
+@Named("xmlToSQL")
+@RegisterForReflection
 public class XmlToSqlBean {
     /**
      * The constant LOG.
