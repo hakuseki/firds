@@ -112,7 +112,7 @@ public class DownloadAnna extends EndpointRouteBuilder {
                                        isin,
                                        lei);
         }
-        log.trace(String.format("sql = %s", sql));
+        log.trace("sql = {}", sql);
         return sql;
     }
     //end::createValidSQL[]

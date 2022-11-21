@@ -1,186 +1,26 @@
 = FIRDS Project
 Mikael Andersson Wigander <mikael.andersson.wigander@pm.me>
 1.0, July 29, 2022: Enterprise Integration Pattern demo
-:icons: font
-:source-highlighter: coderay
 :coderay-linenums-mode: table
 :source-indent: 0
+:icons: font
+:toc:
+:doctype: article:
+:media: print
+:pdf-page-size: A4
+:pdf-page-layout: portrait
+:experimental:
+:autofit-options:
+:imagesdir: ./images/
+:sourcedir: ../../main
+:testdir: src/test
+:source-highlighter: coderay
 
 [.lead]
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
-== FIRDS
-
-*FIRDS* - _Financial Instruments Reference Data System_ - a system where we can lookup information and metadata on financial instruments such as Equities, Bonds and so on.
-
-This application will demonstrate some useful and common patterns used in *Enterprise Integration*.
-
-Specifically it demonstrates:
-
-* consuming services
-* producing output
-* marshall/unmarshall and parsing data formats
-* enrich content
-* persisting endpoints
-* streaming
-* parallel processing
-
-We will illustrate a scenario where we need to persist data derived from the *ESMA FIRDS* source in a database. The data is not fully complete so we need to enrich it. First we need to insert all instruments in our database and then use the data from the *ANNA* service to further enrich the data with the code from the *Issuer* of the instrument. Then we finalise the enrichment by selecting records from the database and query an online service, *GLEIF*, to set the Country on the data.
-
-So we are creating many records from FIRDS in our database, lacking Issuer and country, which we need to enrich from other sources.
-
-The application will demonstrate a process where we query a `REST` service using a query to determine what we can download. +
-The reply, in `XML`, will be links we parse and use to continue the actual downloadable content.
-
-[,xml,linenums,indent="0"]
-.https.xml
-----
-<result name="response" numFound="3632" start="0">
-        <doc>
-            <str name="checksum">f7f1f7ce35f9831403cd593b9a06901a</str>
-            <str name="download_link">http://firds.esma.europa.eu/firds/DLTINS_20201113_01of02.zip</str> <!--.-->
-            <date name="publication_date">2020-11-13T00:00:00Z</date>
-            <str name="published_instrument_file_id">43428</str>
-            <str name="_root_">43428</str>
-            <str name="id">43428</str>
-            <str name="file_name">DLTINS_20201113_01of02.zip</str>
-            <str name="file_type">DLTINS</str>
-            <long name="_version_">1749431080840069145</long>
-            <date name="timestamp">2022-11-14T00:58:10.120Z</date></doc>
-        <doc>
-            <str name="checksum">e4b695fe27ade6de5bccb9d605400268</str>
-            <str name="download_link">http://firds.esma.europa.eu/firds/DLTINS_20201113_02of02.zip</str>
-            <date name="publication_date">2020-11-13T00:00:00Z</date>
-            <str name="published_instrument_file_id">43429</str>
-            <str name="_root_">43429</str>
-            <str name="id">43429</str>
-            <str name="file_name">DLTINS_20201113_02of02.zip</str>
-            <str name="file_type">DLTINS</str>
-            <long name="_version_">1749431080840069146</long>
-            <date name="timestamp">2022-11-14T00:58:10.120Z</date></doc>
-...
-</result>
-----
-<.> Link to parse for a downloadable file
-
-The `zip` files produced by the service is stored on disk as is.
-
-A *File* route will unmarshal these `zip` files _(unzip them)_ and read the content. Content is an `XML` file. This file contains `1->M` instrument data records.
-
-For each instrument record we will parse the `XML` and generate an `SQL` to either `INSERT` or `DELETE` in the database we have connected to. Database is of type *PostgreSQL*. +
-This will store the base data we need to further enrich each record. The data is not 100% fulfilled so we need to query some more services, *ANNA* and *GLEIF*.
-
-*ANNA* is a service where we download data on financial instruments using the same process as before, query a service using some parameters, receive an `HTML` file with download links on, parse that and download a `.zip` file. +
-This `.zip` file contains a `.csv` file that we need to parse and use to enrich data in our database.
-
-[source,csv,linenums]
-.anna.csv
-----
-LEI,ISIN
-724500V6UOK62XEZ2L78,NLEN03247298 <.>
-529900W18LQJJN6SJ336,DE000SN4ESX0
-724500V6UOK62XEZ2L78,NLENX7751979
-724500V6UOK62XEZ2L78,NLICE3689953
-----
-<.> Rows to parse, Issuer ID (LEI) and ISIN (Instrument ID)
-
-Furthermore we still need to fetch more data for enrichment so we query the database for records and use each record to query another `REST` api, `GLEIF`. +
-This service is a regular `REST` api where we query using _normal_ `HTTP` calls and receive a `JSON` structure. However this service has restrictions in the amount of calls that can be made. We need to make our calls restricted to the terms they provide, throttling is used to control the flow, so we won't DDOS them.
-
-We query based on data from our database and enrich using the parsed country code.
-
-[source,json,linenums,line-comment=%]
-.gleif.json
-----
-{
-  "data": [
-    {
-      "type": "lei-records",
-      "id": "98450057F0051A6CCA56",
-      "attributes": {
-        "lei": "98450057F0051A6CCA56",
-        "entity": {
-          "legalName": {
-            "name": "BRANNKASSESTIFTELSEN MIDT-BUSKERUD",
-            "language": "no"
-          },
-          "otherNames": [],
-          "transliteratedOtherNames": [],
-          "legalAddress": {
-            "language": "no",
-            "addressLines": [
-              "Vikersundgata 17"
-            ],
-            "addressNumber": null,
-            "addressNumberWithinBuilding": null,
-            "mailRouting": null,
-            "city": "VIKERSUND",
-            "region": null,
-            "country": "NO", %<.>
-            "postalCode": "3370"
-          },
-          "headquartersAddress": {
-            "language": "no",
-            "addressLines": [
-              "Vikersundgata 17"
-            ],
-            "addressNumber": null,
-            "addressNumberWithinBuilding": null,
-            "mailRouting": null,
-            "city": "VIKERSUND",
-            "region": null,
-            "country": "NO",
-            "postalCode": "3370"
-          }
-      },
-      "relationships": {
-        "managing-lou": {
-          "links": {
-            "related": "https:\/\/api.gleif.org\/api\/v1\/lei-records\/98450057F0051A6CCA56\/managing-lou"
-          }
-        }
-      },
-      "links": {
-        "self": "https:\/\/api.gleif.org\/api\/v1\/lei-records\/98450057F0051A6CCA56"
-      }
-    }
-  ]
-}
-----
-<.> Entry we need to parse
-
-Using `jsonpath` we can extract the following given the reply has 15 entries:
-
-[,json]
-----
-[
-  "NO",
-  "NO",
-  "SE",
-  "SE",
-  "DK",
-  "US",
-  "US",
-  "DK",
-  "US",
-  "US",
-  "US",
-  "IN",
-  "DK",
-  "DE",
-  "EE"
-]
-----
-
-These countries is the used to finalise the enrichment of the records.
-
-<<<
-Some useful links:
-
-* https://www.enterpriseintegrationpatterns.com/index.html[Enterprise Integration Patterns]
-* https://camel.apache.org[Apache Camel]
 
 == Running the application in dev mode
 
