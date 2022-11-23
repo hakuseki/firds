@@ -1,0 +1,62 @@
+esma:
+    delta:
+        path: FIRDS/input/delta
+        startup: true
+    download:
+        startup: false
+        timer:
+            delta: 0+37+13+?+*+MON-FRI+*
+            full: 0+37+13+?+*+SUN+*
+        url: registers.esma.europa.eu/solr/esma_registers_firds_files/select
+    full:
+        path: FIRDS/input/full
+        startup: true
+firds:
+    gleif:
+        anna:
+            startup: true
+            tag: $..data[0].attributes.downloadLink
+            url: isinmapping.gleif.org/api/v2/isin-lei
+        lei:
+            firds-select: SELECT DISTINCT ON (issuer) issuer FROM firds_data WHERE jurisdiction='XS'
+            startup: true
+            tag: $..legalAddress.country
+            throttle:
+                requests: 50
+                time: 60000
+            url: api.gleif.org/api/v1/lei-records
+quarkus:
+    application:
+        name: FIRDS
+    datasource:
+        db-kind: postgresql
+        jdbc:
+            detect-statement-leaks: false
+            driver: org.postgresql.Driver
+            extended-leak-report: true
+            max-size: 16
+            url: jdbc:postgresql://localhost:5432/firds_data
+        password: password
+        username: admin
+    flyway:
+        baseline-on-migrate: true
+        ignore-missing-migrations: true
+        out-of-order: true
+        table: schema_version_FIRDSImporter
+    http:
+        test-port: 8083
+        test-ssl-port: 8446
+        test-timeout: 10s
+    log:
+        category:
+            '"se':
+                hakuseki":
+                    level: TRACE
+        level: INFO
+    micrometer:
+        export:
+            json:
+                enabled: true
+    swagger-ui:
+        urls:
+            camel: /api/*
