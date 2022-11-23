@@ -25,6 +25,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 
 * PostgreSQL database
 * ActiveMQ
+* Description can be found in `src/main/asciidoc/README.adoc`
 
 == Running the application in dev mode
 
