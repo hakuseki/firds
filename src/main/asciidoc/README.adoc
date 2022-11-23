@@ -29,14 +29,18 @@ This application will demonstrate some useful and common patterns used in *Enter
 
 Specifically it demonstrates:
 
-* consuming services
-* producing output
-* marshall/unmarshall and parsing data formats
-* enrich content
-* persisting endpoints
-* streaming
-* parallel processing
-* rest & openAPI
+* Consuming services
+* Producing output
+* Marshalling/unmarshalling and parsing data formats
+* Content enrichment
+* Persisting endpoints
+* Streaming
+* Parallel processing
+* Rest & openAPI (Swagger UI)
+* Health and Readiness
+
+[IMPORTANT]
+In order to run this you must provide a running environment of PostgreSQL and ActiveMQ.
 
 We will illustrate a scenario where we need to persist data derived from the *ESMA FIRDS* source in a database. The data is not fully complete so we need to enrich it. First we need to insert all instruments in our database and then use the data from the *ANNA* service to further enrich the data with the code from the *Issuer* of the instrument. Then we finalise the enrichment by selecting records from the database and query an online service, *GLEIF*, to set the Country on the data.
 
@@ -129,7 +133,7 @@ We query based on data from our database and enrich using the parsed country cod
             "mailRouting": null,
             "city": "VIKERSUND",
             "region": null,
-            "country": "NO", %<.>
+            "country": "NO", <.>
             "postalCode": "3370"
           },
           "headquartersAddress": {
@@ -360,6 +364,16 @@ By accessing the URL http://localhost:8080/api you'll get the documentation of t
 ----
 
 The api will query the database
+
+Also a *Swagger UI* is available at http://localhost:8080/q/swagger-ui/
+
+=== Health and Metrics
+
+This application supports some metrics and health parameters.
+
+Check http://localhost:8080/q/health for more info.
+
+
 
 <<<
 Some useful links:

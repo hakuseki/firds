@@ -29,6 +29,7 @@ public class RestService extends EndpointRouteBuilder {
                 .produces("application/json")
                 .description("REST-FIRDS", "This is the FIRDS database", "en")
                 .get()
+                .description("Fetches all instruments")
                 .responseMessage()
                 .code(200)
                 .message("All instruments successfully returned")
@@ -36,7 +37,7 @@ public class RestService extends EndpointRouteBuilder {
                 .to("direct:getAllFIRDS")
 
                 .get("/{isin}/{currency}/{venue}")
-                .description("GET-ISIN-FIRDS-CURRENCY-VENUE")
+                .description("Get Instrument based on ISIN, Currency and Venue")
                 .param()
                 .name("isin")
                 .type(RestParamType.header)
@@ -62,7 +63,7 @@ public class RestService extends EndpointRouteBuilder {
                 .to("direct:getIsinCurrVenueFIRDS")
 
                 .get("/{isin}/{currency}")
-                .description("GET-ISIN-FIRDS-CURRENCY")
+                .description("Get Instrument based on ISIN and Currency")
                 .param()
                 .name("isin")
                 .type(RestParamType.header)
@@ -131,17 +132,20 @@ public class RestService extends EndpointRouteBuilder {
 
 
         from(direct("getAllFIRDS"))
-                .description("GET-ALL-FIRDS", "Fetch 100 records from database", "en")
+                .routeId("GET-ALL-FIRDS")
+                .description("Fetch 100 records from database")
                 .setBody(simple("select * from firds_data limit 100"))
                 .to(jdbc("default").outputType(JdbcOutputType.SelectList));
 
         from(direct("getIsinFIRDS"))
-                .description("GET-ISIN-FIRDS", "Fetch record based on ISIN", "en")
+                .routeId("GET-ISIN-FIRDS")
+                .description("Fetch record based on ISIN")
                 .setBody(simple("select * from firds_data where isin = '${header.isin.toUpperCase()}'"))
                 .to(jdbc("default").outputType(JdbcOutputType.SelectList));
 
         from(direct("getInstrumentFIRDS"))
-                .description("GET-INSTRUMENT-FIRDS", "Fetch records on currency, price currency and maturity date", "en")
+                .routeId("GET-INSTRUMENT-FIRDS")
+                .description("Fetch records on currency, price currency and maturity date")
                 .setBody(simple(
                         "select * from firds_data where currency='${header.currency.toUpperCase()}' AND " +
                         "price_currency='${header.priceCurrency.toUpperCase()}' AND " +
@@ -149,17 +153,18 @@ public class RestService extends EndpointRouteBuilder {
                 .to(jdbc("default"));
 
         from(direct("getIsinCurrVenueFIRDS"))
-                .description("GET-INSTRUMENT-FIRDS-2", "Fetch records on isin, currency and venue", "en")
+                .routeId("GET-INSTRUMENT-FIRDS-2")
+                .description("Fetch records on isin, currency and venue")
                 .setBody(simple(
                         "select * from firds_data where isin='${header.isin.toUpperCase()}' AND currency='${header.currency.toUpperCase()}' AND " +
                         "venue='${header.venue.toUpperCase()}'"))
                 .to(jdbc("default").outputType(JdbcOutputType.SelectOne));
 
         from(direct("getIsinCurrFIRDS"))
-                .description("GET-INSTRUMENT-FIRDS-3", "Fetch records on isin, currency", "en")
+                .routeId("GET-INSTRUMENT-FIRDS-3")
+                .description("Fetch records on isin, currency")
                 .setBody(simple(
                         "select * from firds_data where isin='${header.isin.toUpperCase()}' AND currency='${header.currency.toUpperCase()}'"))
                 .to(jdbc("default").outputType(JdbcOutputType.SelectList));
-
     }
 }
