@@ -4,6 +4,7 @@ Mikael Andersson Wigander <mikael.andersson.wigander@pm.me>
 :coderay-linenums-mode: table
 :source-indent: 0
 :icons: font
+:toc:
 :doctype: article:
 :media: print
 :pdf-page-size: A4
@@ -35,6 +36,7 @@ Specifically it demonstrates:
 * persisting endpoints
 * streaming
 * parallel processing
+* rest & openAPI
 
 We will illustrate a scenario where we need to persist data derived from the *ESMA FIRDS* source in a database. The data is not fully complete so we need to enrich it. First we need to insert all instruments in our database and then use the data from the *ANNA* service to further enrich the data with the code from the *Issuer* of the instrument. Then we finalise the enrichment by selecting records from the database and query an online service, *GLEIF*, to set the Country on the data.
 
@@ -184,6 +186,180 @@ Using `jsonpath` we can extract the following given the reply has 15 entries:
 ----
 
 These countries is the used to finalise the enrichment of the records.
+
+
+=== REST interface
+
+This application supports a simple REST interface.
+
+By accessing the URL http://localhost:8080/api you'll get the documentation of the api.
+
+[source,json,linenum]
+.openapi.json
+----
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "title" : "FIRDS API",
+    "version" : "1.0.0",
+    "description" : "API for querying instruments from FIRDS"
+  },
+  "servers" : [ {
+    "url" : ""
+  } ],
+  "paths" : {
+    "/firds" : {
+      "get" : {
+        "tags" : [ "/firds" ],
+        "responses" : {
+          "200" : {
+            "description" : "All instruments successfully returned"
+          }
+        },
+        "operationId" : "REST-FIRDS"
+      }
+    },
+    "/firds/{currency}/{priceCurrency}/{maturityDate}/{cfi}" : {
+      "get" : {
+        "tags" : [ "/firds" ],
+        "parameters" : [ {
+          "name" : "currency",
+          "description" : "Notional currency",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        }, {
+          "name" : "priceCurrency",
+          "description" : "Price/Quote Currency",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        }, {
+          "name" : "maturityDate",
+          "description" : "Maturity date as yyyy-MM-dd",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        }, {
+          "name" : "cfi",
+          "description" : "Instrument classification. Starts with…",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Instrument successfully returned"
+          }
+        },
+        "operationId" : "REST-QUERY-FX",
+        "summary" : "Fetch instrument from Currency, Price Currency, Maturity date and Classification"
+      }
+    },
+    "/firds/{isin}" : {
+      "get" : {
+        "tags" : [ "/firds" ],
+        "parameters" : [ {
+          "name" : "isin",
+          "description" : "The ISIN of the instruments",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Instrument(s) successfully returned"
+          }
+        },
+        "operationId" : "GET-ISIN-FIRDS",
+        "summary" : "Find instruments by ISIN"
+      }
+    },
+    "/firds/{isin}/{currency}" : {
+      "get" : {
+        "tags" : [ "/firds" ],
+        "parameters" : [ {
+          "name" : "isin",
+          "description" : "The ISIN of the instruments",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        }, {
+          "name" : "currency",
+          "description" : "Currency",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Instrument(s) successfully returned"
+          }
+        },
+        "operationId" : "REST-FIRDS",
+        "summary" : "GET-ISIN-FIRDS-CURRENCY"
+      }
+    },
+    "/firds/{isin}/{currency}/{venue}" : {
+      "get" : {
+        "tags" : [ "/firds" ],
+        "parameters" : [ {
+          "name" : "isin",
+          "description" : "The ISIN of the instruments",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        }, {
+          "name" : "currency",
+          "description" : "Currency",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        }, {
+          "name" : "venue",
+          "description" : "Venue",
+          "schema" : {
+            "type" : "string"
+          },
+          "in" : "path",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Instrument(s) successfully returned"
+          }
+        },
+        "operationId" : "REST-FIRDS",
+        "summary" : "GET-ISIN-FIRDS-CURRENCY-VENUE"
+      }
+    }
+  },
+  "tags" : [ {
+    "name" : "/firds",
+    "description" : "This is the FIRDS database"
+  } ]
+}
+----
+
+The api will query the database
 
 <<<
 Some useful links:
