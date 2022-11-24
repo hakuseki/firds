@@ -36,6 +36,9 @@ Specifically it demonstrates:
 * Persisting endpoints
 * Streaming
 * Parallel processing
+
+Also included:
+
 * Rest & openAPI (Swagger UI)
 * Health and Readiness
 
