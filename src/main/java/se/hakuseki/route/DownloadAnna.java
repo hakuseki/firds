@@ -31,7 +31,7 @@ public class DownloadAnna extends EndpointRouteBuilder {
                 .to(direct("ANNA"))
                 .setBody(constant(""))
                 .setHeader("JMSType", constant("LEI"))
-                .to(activemq("gleif.lei"))
+                .to(activemq("gleif"))
                 .log("ANNA download completed!")
                 .end();
 
