@@ -49,8 +49,8 @@ quarkus:
         test-timeout: 10s
     log:
         category:
-            '"se':
-                hakuseki":
+            'se':
+                'hakuseki':
                     level: TRACE
         level: INFO
     micrometer:

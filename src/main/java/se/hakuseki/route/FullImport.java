@@ -7,9 +7,7 @@ import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 
-// tag::tagname[]
 
-// end::tagname[]
 /**
  * The type Full import.
  *

@@ -15,11 +15,6 @@ import java.util.Map;
  * Queries GLEIF REST API
  */
 public class DownloadGleif extends EndpointRouteBuilder {
-    /**
-     * The constant GLEIF.
-     */
-    public static final String GLEIF = "GLEIF";
-
 
     /**
      * Configure.

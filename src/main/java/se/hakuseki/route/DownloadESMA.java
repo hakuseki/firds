@@ -9,7 +9,6 @@ import java.net.URL;
 
 /**
  * The type Download esma.
- *
  * Downloads FUL and DLT files from ESMA service and stores them on disk
  */
 public class DownloadESMA extends EndpointRouteBuilder {

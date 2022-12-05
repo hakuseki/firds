@@ -7,8 +7,6 @@ import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import se.hakuseki.beans.XmlToSqlBean;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import java.io.File;
 
 /**
@@ -19,12 +17,7 @@ public class DeltaImport extends EndpointRouteBuilder {
      * The Dbf.
      */
     final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    /**
-     * The X path.
-     */
 
-    XPath xPath = XPathFactory.newInstance()
-                              .newXPath();
 
     /**
      * Configure.
